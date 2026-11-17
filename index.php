@@ -269,19 +269,19 @@
       </span>
     </div>
 
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>E-mail</th>
-            <th>Cargo</th>
-          </tr>
-        </thead>
-
-        <tbody id="employeesTable"></tbody>
-      </table>
-    </div>
+   <div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>E-mail</th>
+        <th>Cargo</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="employeesTable"></tbody>
+  </table>
+</div>
 
     <p id="employeeEmptyState" class="empty muted hidden">
       Nenhum funcionário encontrado.
@@ -291,50 +291,43 @@
 
 </section>
 
-<!-- FORMULÁRIO DE CADASTRO DE FUNCIONÁRIO -->
+<!-- FORMULÁRIO DE CADASTRO E EDIÇÃO DE FUNCIONÁRIO -->
 <section id="employeeFormPage" class="page hidden">
 
   <div class="page-heading">
     <span class="heading-icon">＋</span>
     <div>
-      <h1>Novo Funcionário</h1>
-      <p class="muted">Preencha os dados do novo integrante da equipe</p>
+      <h1 id="employeeFormTitle">Novo Funcionário</h1>
+      <p class="muted">Preencha os dados do integrante da equipe</p>
     </div>
   </div>
 
   <form id="employeeForm" class="panel">
 
+    <input type="hidden" id="employeeId">
+
     <div class="form-grid">
 
       <div class="field full">
         <label for="employeeName">Nome completo</label>
-        <input
-          id="employeeName"
-          type="text"
-          placeholder="Digite o nome completo"
-          required
-        >
+        <input id="employeeName" type="text"
+          placeholder="Digite o nome completo" required>
       </div>
 
       <div class="field full">
         <label for="employeeEmail">E-mail</label>
-        <input
-          id="employeeEmail"
-          type="email"
-          placeholder="exemplo@email.com"
-          required
-        >
+        <input id="employeeEmail" type="email"
+          placeholder="exemplo@email.com" required>
       </div>
 
       <div class="field">
         <label for="employeePassword">Senha</label>
-        <input
-          id="employeePassword"
-          type="password"
+        <input id="employeePassword" type="password"
           minlength="8"
-          placeholder="Mínimo de 8 caracteres"
-          required
-        >
+          placeholder="Mínimo de 8 caracteres">
+        <small class="muted" id="employeePasswordHint">
+          Obrigatória no cadastro.
+        </small>
       </div>
 
       <div class="field">
@@ -351,18 +344,15 @@
     <div class="form-buttons">
 
       <button class="btn primary" type="submit">
-        ＋ Cadastrar funcionário
+        ＋ <span id="employeeSaveLabel">Cadastrar funcionário</span>
       </button>
 
       <button class="btn outline" type="reset">
         ↻ Limpar
       </button>
 
-      <button
-        class="btn outline"
-        type="button"
-        onclick="showPage('employees')"
-      >
+      <button class="btn outline" type="button"
+        onclick="showPage('employees')">
         ← Voltar para funcionários
       </button>
 
@@ -378,6 +368,20 @@
         <div class="page-heading"><span class="heading-icon">♙</span><div><h1>Visualização do Cliente</h1><p class="muted">Informações completas do cadastro</p></div></div>
         <div class="panel detail-panel" id="clientDetails"></div>
       </section>
+      <!-- VISUALIZAÇÃO DE FUNCIONÁRIO -->
+<section id="employeeDetailPage" class="page hidden">
+
+  <div class="page-heading">
+    <span class="heading-icon">♟</span>
+    <div>
+      <h1>Visualização do Funcionário</h1>
+      <p class="muted">Informações completas do integrante da equipe</p>
+    </div>
+  </div>
+
+  <div class="panel detail-panel" id="employeeDetails"></div>
+
+</section>
     </main>
     <footer> Sistema de Clientes <span>•</span> Projeto demonstrativo</footer>
   </div>

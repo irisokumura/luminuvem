@@ -14,7 +14,8 @@ const pages = [
   "clientsPage",
   "detailPage",
   "employeesPage",
-  "employeeFormPage"
+  "employeeFormPage",
+  "employeeDetailPage"
 ];
 
 async function api(url, options = {}) {
@@ -40,8 +41,7 @@ function showError(error) {
 
 function showPage(page) {
   if (
-    (page === "employees" || page === "employeeForm") &&
-    currentCargo !== "gerente"
+(page === "employees" || page === "employeeForm" || page === "employeeDetail") &&    currentCargo !== "gerente"
   ) {
     alert("Apenas gerentes podem acessar esta área.");
     return;
@@ -358,6 +358,7 @@ async function loadEmployees() {
   }
 }
 
+
 function renderEmployees() {
   const term = (
     document.getElementById("employeeSearch")?.value || ""
@@ -378,6 +379,24 @@ function renderEmployees() {
       <td>${escapeHTML(employee.nome_funcionario)}</td>
       <td>${escapeHTML(employee.email_funcionario)}</td>
       <td>${escapeHTML(employee.cargo)}</td>
+      <td>
+        <div class="actions">
+          <button class="mini-btn"
+            onclick="viewEmployee(${Number(employee.id_funcionario)})">
+            Ver
+          </button>
+
+          <button class="mini-btn"
+            onclick="editEmployee(${Number(employee.id_funcionario)})">
+            Editar
+          </button>
+
+          <button class="mini-btn delete"
+            onclick="deleteEmployee(${Number(employee.id_funcionario)})">
+            Excluir
+          </button>
+        </div>
+      </td>
     </tr>
   `).join("");
 
@@ -392,38 +411,191 @@ function renderEmployees() {
   );
 }
 
+
+
 function newEmployee() {
   showPage("employeeForm");
+
+  document.getElementById("employeeId").value = "";
+
+  document.getElementById("employeeFormTitle").textContent =
+    "Novo Funcionário";
+
+  document.getElementById("employeeSaveLabel").textContent =
+    "Cadastrar funcionário";
+
+  document.getElementById("employeePasswordHint").textContent =
+    "Obrigatória no cadastro.";
+
+  document.getElementById("employeePassword").placeholder =
+    "Mínimo de 8 caracteres";
 }
 
 
-// CADASTRO DE FUNCIONÁRIOS
+
+function viewEmployee(id) {
+  const employee = employees.find(
+    item => Number(item.id_funcionario) === Number(id)
+  );
+
+  if (!employee) return;
+
+  document.getElementById("employeeDetails").innerHTML = `
+    <div class="detail-line">
+      <strong>Nome:</strong>
+      ${escapeHTML(employee.nome_funcionario)}
+    </div>
+
+    <div class="detail-line">
+      <strong>E-mail:</strong>
+      ${escapeHTML(employee.email_funcionario)}
+    </div>
+
+    <div class="detail-line">
+      <strong>Cargo:</strong>
+      ${escapeHTML(employee.cargo)}
+    </div>
+
+    <div class="form-buttons">
+      <button class="btn outline"
+        onclick="showPage('employees')">
+        ← Voltar
+      </button>
+
+      <button class="btn primary"
+        onclick="editEmployee(${Number(employee.id_funcionario)})">
+        ✎ Editar
+      </button>
+
+      <button class="btn"
+        style="background:#c34f78;color:white"
+        onclick="deleteEmployee(${Number(employee.id_funcionario)})">
+        ▤ Excluir
+      </button>
+    </div>
+  `;
+
+  showPage("employeeDetail");
+}
+
+
+function editEmployee(id) {
+  const employee = employees.find(
+    item => Number(item.id_funcionario) === Number(id)
+  );
+
+  if (!employee) return;
+
+  showPage("employeeForm");
+
+  document.getElementById("employeeId").value =
+    employee.id_funcionario;
+
+  document.getElementById("employeeName").value =
+    employee.nome_funcionario;
+
+  document.getElementById("employeeEmail").value =
+    employee.email_funcionario;
+
+  document.getElementById("employeeRole").value =
+    employee.cargo;
+
+  document.getElementById("employeePassword").value = "";
+
+  document.getElementById("employeePasswordHint").textContent =
+    "Deixe em branco para manter a senha atual.";
+
+  document.getElementById("employeePassword").placeholder =
+    "Nova senha (opcional)";
+
+  document.getElementById("employeeFormTitle").textContent =
+    "Editar Funcionário";
+
+  document.getElementById("employeeSaveLabel").textContent =
+    "Salvar alterações";
+}
+
+
+async function deleteEmployee(id) {
+  const employee = employees.find(
+    item => Number(item.id_funcionario) === Number(id)
+  );
+
+  if (!employee) return;
+
+  if (!confirm(
+    `Deseja realmente excluir o funcionário ${employee.nome_funcionario}?`
+  )) return;
+
+  try {
+    const result = await api("funcionarios.php", {
+      method: "DELETE",
+      body: JSON.stringify({
+        id_funcionario: Number(id)
+      })
+    });
+
+    alert(result.mensagem);
+
+    await loadEmployees();
+    showPage("employees");
+
+  } catch (error) {
+    showError(error);
+  }
+}
+
 
 
 document.getElementById("employeeForm").addEventListener("submit", async e => {
   e.preventDefault();
 
   if (currentCargo !== "gerente") {
-    alert("Apenas gerentes podem cadastrar funcionários.");
+    alert("Apenas gerentes podem cadastrar ou editar funcionários.");
+    return;
+  }
+
+  const id = document.getElementById("employeeId").value;
+  const senha = document.getElementById("employeePassword").value;
+
+  if (!id && senha.length < 8) {
+    alert("A senha precisa ter pelo menos 8 caracteres.");
+    return;
+  }
+
+  if (id && senha.length > 0 && senha.length < 8) {
+    alert("A nova senha precisa ter pelo menos 8 caracteres.");
     return;
   }
 
   const data = {
+    id_funcionario: id ? Number(id) : undefined,
     nome: value("employeeName"),
     email: value("employeeEmail"),
-    senha: document.getElementById("employeePassword").value,
+    senha: senha,
     cargo: value("employeeRole")
   };
 
   try {
-    const result = await api("cadastrar_funcionario.php", {
-      method: "POST",
-      body: JSON.stringify(data)
-    });
+
+    let result;
+
+if (id) {
+  result = await api("funcionarios.php", {
+    method: "PUT",
+    body: JSON.stringify(data)
+  });
+} else {
+  result = await api("cadastrar_funcionario.php", {
+    method: "POST",
+    body: JSON.stringify(data)
+  });
+}
 
     alert(result.mensagem);
 
     document.getElementById("employeeForm").reset();
+    document.getElementById("employeeId").value = "";
 
     await loadEmployees();
     showPage("employees");

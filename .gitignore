@@ -1,0 +1,24 @@
+
+# Arquivos temporários
+*.log
+*.tmp
+*.bak
+*.old
+
+# Configurações locais
+.env
+.env.*
+
+# Backups e arquivos compactados
+*.zip
+*.rar
+*.7z
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Dependências e cache
+vendor/
+node_modules/

@@ -1,0 +1,169 @@
+LUMINUVEM — Sistema de Gerenciamento de Clientes
+
+1. Sobre o projeto
+
+O Luminuvem é um sistema de gerenciamento de clientes e funcionários desenvolvido com HTML, CSS, JavaScript, PHP e MySQL.
+
+O sistema permite cadastrar, consultar, editar e excluir clientes, além de gerenciar os funcionários cadastrados e controlar o acesso de acordo com o cargo de cada usuário.
+
+A aplicação utiliza PHP para realizar a comunicação com o banco de dados MySQL e JavaScript com `fetch()` para enviar e receber informações do servidor.
+
+2. Tecnologias utilizadas
+
+- HTML
+- CSS
+- JavaScript
+- PHP
+- MySQL
+- XAMPP
+- Visual Studio Code
+
+3. Funcionalidades
+
+Login e contas
+- Login com e-mail e senha.
+- Cadastro de novas contas de funcionários pela tela de login.
+- Validação dos campos e confirmação de senha.
+- Verificação de e-mails já cadastrados.
+- Armazenamento de senhas com `password_hash()`.
+- Controle de sessão para manter o usuário autenticado.
+
+Gerenciamento de clientes
+- Cadastro de clientes.
+- Consulta e listagem de clientes.
+- Pesquisa por nome, CPF ou e-mail.
+- Visualização dos dados completos.
+- Edição de informações.
+- Exclusão de cadastros.
+
+Gerenciamento de funcionários
+- Cadastro de funcionários por gerentes.
+- Listagem de funcionários cadastrados.
+- Definição de cargos: gerente ou funcionário.
+- Restrição de acesso às áreas administrativas.
+- Proteção das operações por validações no PHP.
+
+4. Requisitos para execução
+
+Para executar o sistema, é necessário ter:
+
+- Windows.
+- XAMPP instalado.
+- Apache e MySQL habilitados.
+- PHP com suporte a PDO e PDO MySQL.
+- Navegador atualizado.
+
+5. Instalação e configuração
+
+Passo 1 — Iniciar o XAMPP
+
+Abra o painel de controle do XAMPP e inicie:
+
+- Apache
+- MySQL
+
+Passo 2 — Configurar o banco de dados
+
+1. Acesse o phpMyAdmin pelo navegador: http://localhost/phpmyadmin/
+2. Crie o banco de dados chamado `luminuvem`.
+3. Execute os comandos SQL utilizados no projeto para criar as tabelas `funcionario` e `cliente`.
+
+A estrutura do banco deve corresponder à utilizada pelos arquivos PHP.
+
+Passo 3 — Colocar o projeto no servidor
+
+Copie a pasta `luminuvem_backup` para:
+
+`C:\xampp\htdocs\`
+
+A estrutura deverá ficar semelhante a:
+
+```text
+C:\xampp\htdocs\luminuvem_backup\
+```
+
+Passo 4 — Configurar a conexão
+
+Abra o arquivo `db.php` e confira os dados de conexão com o MySQL.
+
+Na configuração padrão do XAMPP:
+
+- Servidor: `localhost`
+- Banco de dados: `luminuvem`
+- Usuário: `root`
+- Senha: vazia
+
+Caso sua instalação utilize outras credenciais, atualize os valores no arquivo.
+
+Passo 5 — Acessar o sistema
+
+Com Apache e MySQL em execução, abra:
+
+http://localhost/luminuvem_backup/
+
+O sistema será exibido na tela de login.
+
+Importante: não abra o arquivo `index.php` diretamente pelo Explorador de Arquivos. A aplicação deve ser executada pelo servidor Apache, utilizando `localhost`.
+
+6. Cadastro e acesso de funcionários
+
+O sistema possui duas formas de cadastro:
+
+Cadastro pela tela de login
+
+- Qualquer pessoa que acessar a tela de login pode solicitar a criação de uma conta.
+- As contas criadas por essa opção recebem automaticamente o cargo `funcionario`.
+- O cargo não pode ser escolhido pelo usuário nessa tela.
+- A senha é armazenada utilizando `password_hash()`.
+
+Cadastro realizado por gerentes
+
+- Gerentes podem acessar a área de funcionários.
+- Podem cadastrar novos integrantes.
+- Podem definir se o novo funcionário será gerente ou funcionário.
+- Funcionários comuns não possuem acesso às áreas exclusivas de gerência.
+
+7. Segurança
+
+O projeto utiliza alguns mecanismos de segurança:
+
+- Criptografia de senhas com `password_hash()`.
+- Verificação de senhas com `password_verify()`.
+- Controle de sessão com PHP.
+- Regeneração do identificador da sessão durante o login.
+- Consultas preparadas com PDO.
+- Validação de permissões no servidor.
+- Restrição de acesso às operações administrativas.
+
+8. Estrutura do projeto
+
+Principais arquivos e pastas:
+
+```text
+luminuvem_backup/
+│
+├── assets/
+│   └── logo-luminuvem.png
+│
+├── index.php
+├── style.css
+├── script.js
+├── db.php
+├── auth.php
+├── login.php
+├── logout.php
+├── clientes.php
+├── funcionarios.php
+├── cadastrar_funcionario.php
+└── cadastrar_conta.php
+```
+
+9. Observações 
+
+- O campo `endereco_cliente` reúne as informações de endereço, cidade e estado em um único texto.
+- O login exige uma conta previamente cadastrada.
+- O cadastro público cria exclusivamente contas de funcionário.
+- O cadastro de gerentes é restrito aos usuários que já possuem esse cargo.
+- Os dados dos clientes e funcionários são armazenados no banco MySQL.
+- É recomendável realizar backups periódicos do banco de dados.
+
